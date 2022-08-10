@@ -1,39 +1,42 @@
 <?php 
 
 namespace Ltreu\MyHabr\Blog;
+
+use Ltreu\MyHabr\Blog\UUID;
 use Ltreu\MyHabr\Persons\User;
+
 class Post
 {
-    private int $idPost;
-    private int $idAuthor;
-    private string $tittle;
+    private UUID $id;
+    private UUID $idAuthor;
+    private string $title;
     private string $text;
 
 
-public function __construct( $idPost,User $idAuthor, $tittle, $text ) 
+public function __construct( UUID $id,User $idAuthor, $title, $text ) 
 {
-    $this->idPost = $idPost;
-    $this->idAuthor = $idAuthor->getId();
-    $this->tittle = $tittle;
+    $this->id = $id;
+    $this->idAuthor = $idAuthor->uuid();
+    $this->title = $title;
     $this->text = $text;
 
 }
 
-public function getIdPost(): int
+public function uuid(): UUID
 {
-return $this->idPost;
+return $this->id;
 }
 
-public function getidAuthor(): int
+public function autor_uuid(): UUID
 {
-return $this->idAuthor;
+    return $this->idAuthor;
 }
 
 public function __toString()
 {
 return 'id статьи : '. $this->getIdPost() .
  'Автор id :'. $this->idAuthor .
-  ' пишет: ' .$this->tittle .
+  ' пишет: ' .$this->title .
   'текст статьи : '. $this->text;
 }
 
@@ -42,4 +45,20 @@ return 'id статьи : '. $this->getIdPost() .
  */
 
 
+
+    /**
+     * Get the value of tittle
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * Get the value of text
+     */
+    public function getText(): string
+    {
+        return $this->text;
+    }
 }

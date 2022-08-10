@@ -2,29 +2,35 @@
 
 require_once __DIR__ . '/vendor/autoload.php'; 
 
+
+use PDO;
 use Ltreu\MyHabr\Blog\Post;
+use Ltreu\MyHabr\Blog\UUID;
 use Ltreu\MyHabr\Persons\User;
-use Ltreu\MyHabr\Blog\Comment;
+use Ltreu\MyHabr\Blog\Commands\Arguments;
+use Ltreu\MyHabr\Blog\Commands\CreateUsersCommand;
+use Ltreu\MyHabr\Blog\Repositories\PostRepository;
+use Ltreu\MyHabr\Blog\Repositories\UserRepository;
 
-$user = Faker\Factory :: create();
 
-$argv = new User(
-        10,
-        $user->name ()
-);
 
-$post = new Post(
-    1,
-    $argv,
-    'Это заголовок пробного поста', 
-    'Ну а это текст поста ...'
-);
 
-$comment = new Comment(
-    3,
-    $argv,
-    $post,
-    'текст коммента'
-);
+$PostRepository = new PostRepository(
+    new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
+    );
 
-print $comment;
+$usersRepository = new UserRepository(
+        new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
+        );
+   
+
+// $command = new CreateUsersCommand($PostRepository);
+$user = $usersRepository->getByUsername('Dmitriy');
+try {
+     $PostRepository->save(new Post(UUID::random(),$users, 'TREEER' , 'eujhjeeujhv iehhve hiueh heu euh ue u'));
+    //$command->handle(( Arguments::fromArgv($argv)));
+//    print $user;
+    } catch (CommandException) {
+        echo "cli_error";
+    };
+   

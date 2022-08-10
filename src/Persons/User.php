@@ -2,35 +2,43 @@
 
 namespace Ltreu\MyHabr\Persons;
 
+use Ltreu\MyHabr\Blog\UUID;
+
 class User
 {
-public function __construct(private int $id, private string $firstName)
+    private UUID $idAuthor;
+    private string $username;
+    private Name $name;
+
+    public function __construct( UUID $id, string $username , Name $name )
  {
     $this->idAuthor = $id;
-    $this->firstName = $firstName;
-
+    $this->name= $name;
+    $this->username = $username;
 }
 
 public function __toString()
 {
-return $this->firstName ;
+    $firstName = $this->name()->first();
+    $lastName = $this->name()->last();
 }
 
 /**
  * Get the value of id
  */
-public function getId(): int
+
+public function uuid(): UUID
 {
-return $this->id;
+    return $this->idAuthor;
 }
 
-/**
- * Set the value of id
- */
-public function setId(int $id): self
+public function username(): string
 {
-$this->id = $id;
-
-return $this;
+    return $this->username;
 }
+
+public function name(): Name
+    {
+        return $this->name;
+    }
 }
