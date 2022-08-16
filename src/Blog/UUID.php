@@ -5,7 +5,7 @@ use Ltreu\MyHabr\Exceptions\InvalidArgumentException;
 
 class UUID 
 {
-    private string $uuid;
+    private string $uuidString;
 
     public function __construct(string $uuid)
     {

@@ -2,6 +2,8 @@
 namespace Ltreu\MyHabr\Blog\Commands;
 
 use Ltreu\MyHabr\Blog\Post;
+use Ltreu\MyHabr\Blog\UUID;
+use Ltreu\MyHabr\Exceptions\PostNotFoundException;
 use Ltreu\MyHabr\Blog\Repositories\interfaces\PostsRepositoryInterface;
 
 
@@ -21,9 +23,9 @@ class CreatePostsCommand
     {
         $title = $arguments->get('title');
     if ($this->userExists($title)) {
-        throw new CommandException("User already exists: $title");
+        throw new CommandException("Title already exists: $title");
     }
-        $this->usersRepository->save(new Post(
+        $this->postsRepository->save(new Post(
             UUID::random(),
             $arguments->get('autor_uuid'),
             $arguments->get('title'),
@@ -32,11 +34,11 @@ class CreatePostsCommand
         
     }
         
-    private function userExists(string $titlePost): Post
+    private function userExists(string $titlePost): bool
     {
     try {
         $this->postsRepository->getPostTitle($titlePost);
-    } catch (UserNotFoundException) {
+    } catch (PostNotFoundException) {
         return false;
     }
         return true;

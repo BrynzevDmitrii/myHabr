@@ -4,7 +4,7 @@ namespace Ltreu\MyHabr\Blog\Commands;
 use Ltreu\MyHabr\Blog\UUID;
 use Ltreu\MyHabr\Blog\Comment;
 use Ltreu\MyHabr\Blog\Commands\Arguments;
-use Ltreu\MyHabr\Exceptions\UserNotFoundException;
+use Ltreu\MyHabr\Exceptions\CommentNotFoundException;
 use Ltreu\MyHabr\Blog\Repositories\interfaces\CommentsRepositoryInterface;
 
 class CreateCommetsCommand
@@ -19,7 +19,7 @@ class CreateCommetsCommand
     public function handle(Arguments $arguments): void
     {
         $commentText = $arguments->get('text');
-    if ($this->userExists($commentText)) {
+    if ($this->commentExists($commentText)) {
         throw new CommandException("User already exists: $commentText");
     }
         $this->commentRepository->save(new Comment(
@@ -35,7 +35,7 @@ class CreateCommetsCommand
     {
     try {
         $this->commentRepository->getText($commentText);
-    } catch (UserNotFoundException) {
+    } catch (CommentNotFoundException) {
         return false;
     }
         return true;

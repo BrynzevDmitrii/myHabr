@@ -4,6 +4,7 @@ namespace Ltreu\MyHabr\Blog\Repositories;
 use PDO;
 use Ltreu\MyHabr\Blog\UUID;
 use Ltreu\MyHabr\Blog\Comment;
+use Ltreu\MyHabr\Exceptions\IdNotFoundException;
 use Ltreu\MyHabr\Exceptions\UserNotFoundException;
 use Ltreu\MyHabr\Blog\Repositories\interfaces\CommentsRepositoryInterface;
 
@@ -24,7 +25,7 @@ class CommentRepository implements CommentsRepositoryInterface
         );
 
         $statement->execute([
-            ':uuid' =>(string)$textComment->uuid(),
+            ':uuid' =>(string)$textComment->getIdComment(),
             ':post_uuid'=>$textComment->getIdPost(),
             ':autor_uuid' => $textComment->getIdAuthor(),
             ':text' => $textComment->getTextComment()
@@ -35,7 +36,7 @@ class CommentRepository implements CommentsRepositoryInterface
     public function get(UUID $id):Comment
     {
         $statement = $this->connection->prepare(
-            'SELECT * FROM comments WHERE  = uuid :uuid'
+            'SELECT * FROM comments WHERE uuid = :uuid'
             );
             $statement->execute([
             ':uuid' => (string)$id,
@@ -43,12 +44,12 @@ class CommentRepository implements CommentsRepositoryInterface
             return $this->getComments($statement, $id);
     }
 
-    private function getComments( $statement, string $id): Post
+    private function getComments( $statement, string $id): Comment
     {
             $result = $statement->fetch(PDO::FETCH_ASSOC);
             
             if (false === $result) {
-            throw new UserNotFoundException(
+            throw new IdNotFoundException(
             "Cannot find autor: $id"
             );
         }
@@ -62,6 +63,17 @@ class CommentRepository implements CommentsRepositoryInterface
         );
 
     }
-
+    
+    public function getText(string $idPost): bool
+    {
+        $statement = $this->connection->prepare(
+            'SELECT * FROM comments WHERE post_uuid = :post_uuid'
+            );
+    
+            $statement->execute([
+            ':post_uuid' => $idPost,
+            ]);
+            return $this->getComments($statement, $idPost);
+    }
 
 }

@@ -4,7 +4,10 @@ namespace Ltreu\MyHabr\Blog\Repositories;
 use PDO;
 use Ltreu\MyHabr\Blog\Post;
 use Ltreu\MyHabr\Blog\UUID;
+use Ltreu\MyHabr\Exceptions\AutorNotFoundException;
 use Ltreu\MyHabr\Blog\Repositories\interfaces\PostsRepositoryInterface;
+
+
 
 
 
@@ -49,13 +52,12 @@ class PostRepository implements PostsRepositoryInterface
             $result = $statement->fetch(PDO::FETCH_ASSOC);
             
             if (false === $result) {
-            throw new UserNotFoundException(
+            throw new AutorNotFoundException(
             "Cannot find autor: $autor_uuid"
             );
         }
 
     return new Post(
-        
         new UUID($result['uuid']),
         $result['autor_uuid'],
         $result['title'], 

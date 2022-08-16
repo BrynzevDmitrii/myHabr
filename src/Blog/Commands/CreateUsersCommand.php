@@ -7,7 +7,8 @@ use Ltreu\MyHabr\Persons\User;
 use Ltreu\MyHabr\Blog\Commands\Arguments;
 use Ltreu\MyHabr\Exceptions\CommandException;
 use Ltreu\MyHabr\Exceptions\UserNotFoundException;
-use Ltreu\MyHabr\Blog\Repositories\UsersRepositoryInterface;
+use Ltreu\MyHabr\Blog\Repositories\interfaces\UsersRepositoryInterface;
+
 
  
 

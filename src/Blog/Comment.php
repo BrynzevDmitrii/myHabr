@@ -8,12 +8,12 @@ use Ltreu\MyHabr\Persons\User;
 
 
 class Comment {
-    private int $id;
-    private int $idAuthor;
-    private int $idPost;
+    private UUID $id;
+    private UUID $idAuthor;
+    private UUID $idPost;
     private string $textComment;
     
-    public function __construct($id,Post $idAuthor, Post $idPost, $textComment )
+    public function __construct(UUID $id,Post $idAuthor, Post $idPost, $textComment )
     {
         $this->id = $id;
         $this->idAuthor = $idAuthor->autor_uuid();
@@ -24,7 +24,7 @@ class Comment {
     /**
      * Get the value of idComment
      */
-    public function getIdComment(): int
+    public function getIdComment(): UUID
     {
         return $this->id;
     }
@@ -53,7 +53,7 @@ class Comment {
     /**
      * Get the value of idPost
      */
-    public function getIdPost(): int
+    public function getIdPost(): UUID
     {
         return $this->idPost;
     }
