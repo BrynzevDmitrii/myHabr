@@ -12,6 +12,7 @@
         }
     ],
     "require": {
+        "psr/container": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.20",

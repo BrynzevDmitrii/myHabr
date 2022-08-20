@@ -14,7 +14,7 @@ class UUID
                 "Malformed UUID: $this->uuidString"
                 );
         }
-        $this->uuid=$uuid;
+        $this->uuidString = $uuid;
     }
 
     public static function random(): self
@@ -24,7 +24,7 @@ class UUID
 
     public function __toString(): string
     {
-    return $this->uuid;
+    return $this->uuidString;
     }
 
 }

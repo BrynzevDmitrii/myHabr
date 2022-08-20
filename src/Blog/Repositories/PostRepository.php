@@ -4,10 +4,10 @@ namespace Ltreu\MyHabr\Blog\Repositories;
 use PDO;
 use Ltreu\MyHabr\Blog\Post;
 use Ltreu\MyHabr\Blog\UUID;
+use Ltreu\MyHabr\Persons\Name;
+use Ltreu\MyHabr\Persons\User;
 use Ltreu\MyHabr\Exceptions\AutorNotFoundException;
-use Ltreu\MyHabr\Blog\Repositories\interfaces\PostsRepositoryInterface;
-
-
+use Ltreu\MyHabr\Blog\Repositories\Interfaces\PostsRepositoryInterface;
 
 
 
@@ -39,30 +39,52 @@ class PostRepository implements PostsRepositoryInterface
     public function get(UUID $autor_uuid):Post
     {
         $statement = $this->connection->prepare(
-            'SELECT * FROM posts WHERE  = autor_uuid :autor_uuid'
+            'SELECT *
+            FROM posts LEFT JOIN users
+                   ON posts.autor_uuid = users.uuid 
+                   WHERE posts.autor_uuid = :uuid'
             );
             $statement->execute([
-            ':autor_uuid' => (string)$autor_uuid,
+            ':uuid' => (string)$autor_uuid,
             ]);
             return $this->getPost($statement, $autor_uuid);
     }
 
-    private function getPost( $statement, string $autor_uuid): Post
+    public function getPostToUuidPost(UUID $post_uuid):Post
+    {
+        $statement = $this->connection->prepare(
+            'SELECT * FROM posts, users WHERE   posts.uuid = :post_uuid'
+            );
+            $statement->execute([
+            ':post_uuid' => (string)$post_uuid,
+            ]);
+            return $this->getPost($statement, $post_uuid);
+    }
+
+    private function getPost( $statement, string $uuid): Post
     {
             $result = $statement->fetch(PDO::FETCH_ASSOC);
             
             if (false === $result) {
             throw new AutorNotFoundException(
-            "Cannot find autor: $autor_uuid"
+            "Cannot find autor: $uuid"
             );
         }
 
-    return new Post(
-        new UUID($result['uuid']),
-        $result['autor_uuid'],
-        $result['title'], 
-        $result['text']
+        $user = new User(
+            new UUID($result['autor_uuid']),
+            $result['username'],
+            new Name($result['first_name'], $result['last_name'])
         );
+        print_r($result);
+
+   
+        return new Post(
+            new UUID($result['uuid']),
+            $user,
+            $result['title'], 
+            $result['text']
+            );
 
     }
 

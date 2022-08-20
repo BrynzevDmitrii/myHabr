@@ -10,6 +10,7 @@ interface  PostsRepositoryInterface {
     public function get(UUID $autor_uuid):Post;
     public function save (Post $titlePost) : void;
     public function getPostTitle(string $titlePost): Post;
+    public function getPostToUuidPost(UUID $post_uuid):Post;
 
     
 }
