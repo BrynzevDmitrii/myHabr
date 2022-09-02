@@ -4,6 +4,7 @@ namespace Ltreu\MyHabr\Blog\Repositories;
 use PDO;
 use Ltreu\MyHabr\Blog\Post;
 use Ltreu\MyHabr\Blog\UUID;
+use Psr\Log\LoggerInterface;
 use Ltreu\MyHabr\Persons\Name;
 use Ltreu\MyHabr\Persons\User;
 use Ltreu\MyHabr\Exceptions\AutorNotFoundException;
@@ -14,8 +15,9 @@ use Ltreu\MyHabr\Blog\Repositories\Interfaces\PostsRepositoryInterface;
 class PostRepository implements PostsRepositoryInterface
 {
     private PDO $connection;
+    private LoggerInterface $logger;
 
-    public function __construct(PDO $connection ) 
+    public function __construct(PDO $connection, LoggerInterface $logger ) 
     {
         $this->connection = $connection;
     }
@@ -33,7 +35,8 @@ class PostRepository implements PostsRepositoryInterface
             ':title' => $post->getTitle(),
             ':text' => $post->getText()
             ]);
-            
+
+            $this->logger->info("post create:"{$post->uuid()});
     }
 
     public function get(UUID $autor_uuid):Post
@@ -53,7 +56,9 @@ class PostRepository implements PostsRepositoryInterface
     public function getPostToUuidPost(UUID $post_uuid):Post
     {
         $statement = $this->connection->prepare(
-            'SELECT * FROM posts, users WHERE   posts.uuid = :post_uuid'
+            'SELECT * FROM posts LEFT JOIN users 
+            ON  posts.autor_uuid = users.uuid 
+            WHERE posts.uuid = :post_uuid'
             );
             $statement->execute([
             ':post_uuid' => (string)$post_uuid,
@@ -66,9 +71,11 @@ class PostRepository implements PostsRepositoryInterface
             $result = $statement->fetch(PDO::FETCH_ASSOC);
             
             if (false === $result) {
-            throw new AutorNotFoundException(
-            "Cannot find autor: $uuid"
-            );
+                $massage = "Cannot find autor: $uuid";
+
+                $this->logger->warning($massage);
+
+            throw new AutorNotFoundException($massage);
         }
 
         $user = new User(

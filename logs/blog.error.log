@@ -1,0 +1,2 @@
+[2022-08-25T13:03:46.296732+02:00] blog.ERROR: User already exists: user12 {"exception":"[object] (Ltreu\\MyHabr\\Exceptions\\CommandException(code: 0): User already exists: user12 at C:\\Users\\ltreu\\Desktop\\myHabr\\src\\Blog\\Commands\\CreateUsersCommand.php:36)"} []
+[2022-08-25T13:37:49.549953+02:00] blog.ERROR: No such argument: username {"exception":"[object] (Ltreu\\MyHabr\\Exceptions\\ArgumentsException(code: 0): No such argument: username at C:\\Users\\ltreu\\Desktop\\myHabr\\src\\Blog\\Commands\\Arguments.php:45)"} []

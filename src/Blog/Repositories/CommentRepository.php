@@ -3,6 +3,7 @@ namespace Ltreu\MyHabr\Blog\Repositories;
 
 use PDO;
 use Ltreu\MyHabr\Blog\UUID;
+use Psr\Log\LoggerInterface;
 use Ltreu\MyHabr\Blog\Comment;
 use Ltreu\MyHabr\Exceptions\IdNotFoundException;
 use Ltreu\MyHabr\Exceptions\UserNotFoundException;
@@ -11,8 +12,9 @@ use Ltreu\MyHabr\Blog\Repositories\interfaces\CommentsRepositoryInterface;
 class CommentRepository implements CommentsRepositoryInterface
 {
     private PDO $connection;
+    private LoggerInterface $logger;
 
-    public function __construct(PDO $connection ) 
+    public function __construct(PDO $connection, LoggerInterface $logger ) 
     {
         $this->connection = $connection;
     }
@@ -30,7 +32,10 @@ class CommentRepository implements CommentsRepositoryInterface
             ':autor_uuid' => $textComment->getIdAuthor(),
             ':text' => $textComment->getTextComment()
             ]);
-            
+
+            $uuid = $statemant->fetch(PDO::FETCH_ASSOC);
+
+            $this->logger->info("Post created :" {$textComment->getIdComment()});   
     }
 
     public function get(UUID $id):Comment
@@ -47,11 +52,14 @@ class CommentRepository implements CommentsRepositoryInterface
     private function getComments( $statement, string $id): Comment
     {
             $result = $statement->fetch(PDO::FETCH_ASSOC);
-            
+           
             if (false === $result) {
-            throw new IdNotFoundException(
-            "Cannot find autor: $id"
-            );
+
+                $massage = "Cannot find autor: $uuid";
+
+                $this->logger->warning($massage);
+
+                throw new IdNotFoundException($massage);
         }
 
     return new Comment(

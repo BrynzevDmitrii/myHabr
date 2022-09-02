@@ -5,6 +5,7 @@ namespace Ltreu\MyHabr\Blog\Repositories;
 
 use PDO;
 use Ltreu\MyHabr\Blog\UUID;
+use Psr\Log\LoggerInterface;
 use Ltreu\MyHabr\Persons\Name;
 use Ltreu\MyHabr\Persons\User;
 use Ltreu\MyHabr\Exceptions\UserNotFoundException;
@@ -18,8 +19,9 @@ use Ltreu\MyHabr\Blog\Repositories\interfaces\UsersRepositoryInterface;
 class UserRepository implements UsersRepositoryInterface
 {
     private PDO $connection;
+    private LoggerInterface $logger;
 
-    public function __construct(PDO $connection ) 
+    public function __construct(PDO $connection, LoggerInterface $logger ) 
     {
         $this->connection = $connection;
     }
@@ -37,6 +39,8 @@ class UserRepository implements UsersRepositoryInterface
             ':first_name' => $user->name()->first(),
             ':last_name' => $user->name()->last()
             ]);
+
+            $this->logger->info("user create:"{$user-> uuid()});
             
     }
 
@@ -68,9 +72,12 @@ class UserRepository implements UsersRepositoryInterface
             $result = $statement->fetch(PDO::FETCH_ASSOC);
             
             if (false === $result) {
-            throw new UserNotFoundException(
-            "Cannot find user: $username"
-            );
+
+                $massage = "Cannot find user: $username";
+
+                $this->logger->warning($massage);
+
+                throw new UserNotFoundException($massage);
         }
 
     return new User(

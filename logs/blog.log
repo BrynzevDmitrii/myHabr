@@ -1,0 +1,7 @@
+
+[2022-08-25T13:03:46.291973+02:00] blog.INFO: Create user command started [] []
+[2022-08-25T13:10:02.079098+02:00] blog.INFO: Create user command started [] []
+[2022-08-25T13:10:02.083185+02:00] blog.WARNING: User already exists: user12 [] []
+[2022-08-25T13:37:24.011926+02:00] blog.INFO: Create user command started [] []
+[2022-08-25T13:37:24.016389+02:00] blog.WARNING: User already exists: user12 [] []
+[2022-08-25T13:37:49.548101+02:00] blog.INFO: Create user command started [] []

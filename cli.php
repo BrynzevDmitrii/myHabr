@@ -3,36 +3,36 @@
 require_once __DIR__ . '/vendor/autoload.php'; 
 
 
-use PDO;
-use Ltreu\MyHabr\Blog\Post;
-use Ltreu\MyHabr\Blog\UUID;
-use Ltreu\MyHabr\Blog\Comment;
-use Ltreu\MyHabr\Persons\Name;
-use Ltreu\MyHabr\Persons\User;
+use Psr\Log\LoggerInterface;
 use Ltreu\MyHabr\Blog\Commands\Arguments;
+use Ltreu\MyHabr\Exceptions\AppException;
+use Ltreu\MyHabr\Blog\Commands\CreateLikeCommand;
+use Ltreu\MyHabr\Blog\Commands\CreatePostsCommand;
 use Ltreu\MyHabr\Blog\Commands\CreateUsersCommand;
 use Ltreu\MyHabr\Blog\Repositories\PostRepository;
 use Ltreu\MyHabr\Blog\Repositories\UserRepository;
+use Ltreu\MyHabr\Blog\Commands\CreateCommetsCommand;
 use Ltreu\MyHabr\Blog\Repositories\CommentRepository;
 
 
+$container = require __DIR__ . '/bootstrap.php';
 
 
-$comment = new CommentRepository(
-    new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
-    );
 
-$usersRepository = new UserRepository(new PDO('sqlite:' . __DIR__ . '/blog.sqlite'));
+$logger = $container->get(LoggerInterface::class);
+ $command = $container->get(CreateUsersCommand::class);
 
-// $user = $usersRepository->get('dc103cd9-1d62-47ef-b337-c87407f2b227');
+ $command = $container->get(CreatePostsCommand::class);
 
-$post = new PostRepository( new PDO('sqlite:' . __DIR__ . '/blog.sqlite'))  ;  
+ $command = $container->get(CreateCommetsCommand::class);
 
-$newpost= new Post(new UUID ('55890f6d-87e3-44ef-a6b7-144fc8acb2dd'), new User(new UUID('7f2ddf90-81d1-4a2f-80dd-98e8801f6ee2'),'Dmitriy', new Name("Dmitriyl", "Kirin")),'TREEER', 'eujhjeeujhv iehhve hiueh heu euh ue u');
- 
-// $posts = $post->get($user->uuid());
-     
+ $command = $container->get(CreateLikeCommand::class);
 
-$newcomment = new Comment(new UUID ( UUID::random()),$newpost, $newpost, "текст коммента" );
 
-$comment->save($newcomment);
+try {
+    $command = $container->get(CreateUsersCommand::class);
+    $command->handle(Arguments::fromArgv($argv));
+    } catch (Exception $e) {
+        $logger->error($e->getMessage(), ['exception' => $e]);
+    }
+   

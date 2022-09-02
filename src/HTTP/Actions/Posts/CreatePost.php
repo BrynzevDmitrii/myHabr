@@ -3,6 +3,7 @@ namespace Ltreu\MyHabr\HTTP\Actions\Posts;
 
 use Ltreu\MyHabr\Blog\Post;
 use Ltreu\MyHabr\Blog\UUID;
+use Psr\Log\LoggerInterface;
 use Ltreu\MyHabr\HTTP\Request;
 use Ltreu\MyHabr\HTTP\Response;
 use Ltreu\MyHabr\HTTP\ErrorResponse;
@@ -17,27 +18,31 @@ class CreatePost implements ActionInterface
 {
     public function __construct(
         private PostsRepositoryInterface $postsRepository,
-        private UsersRepositoryInterface $usersRepository,
-        ) {
+        private IdentificationInterface $identification,
+        private LoggerInterface $logger
+        ){
         }
         public function handle(Request $request): Response
             {
+
+            $author = $this->identification->user($request);
         
-            try {
-            $authorUuid = new UUID($request->jsonBodyField('author_uuid'));
-            } catch (HttpException | InvalidArgumentException $e) {
-            return new ErrorResponse($e->getMessage());
-            }
+            // try {
+            // $authorUuid = new UUID($request->jsonBodyField('autor_uuid'));
+            // } catch (HttpException | InvalidArgumentException $e) {
+            // return new ErrorResponse($e->getMessage());
+            // }
             
-            try {
-            $user = $this->usersRepository->get($authorUuid);
-            } catch (UserNotFoundException $e) {
-            return new ErrorResponse($e->getMessage());
-            }
+            // try {
+            // $user = $this->usersRepository->get($authorUuid);
+            // } catch (UserNotFoundException $e) {
+            // return new ErrorResponse($e->getMessage());
+            // }
             
             $newPostUuid = UUID::random();
+            
             try {
-            $comment = new Post(
+            $post = new Post(
             $newPostUuid,
             $user,
             $request->jsonBodyField('title'),
@@ -47,7 +52,9 @@ class CreatePost implements ActionInterface
             return new ErrorResponse($e->getMessage());
             }
             
-            $this->postsRepository->save($comment);
+            $this->postsRepository->save($post);
+
+            $this->logger->info("Post created: $newPostUuid");
            
             return new SuccessfulResponse([
             'uuid' => (string)$newPostUuid,

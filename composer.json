@@ -5,6 +5,11 @@
             "Ltreu\\MyHabr\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+        "Ltreu\\MyHabr\\Blog\\UnitTests\\": "tests/"
+        }
+        },        
     "authors": [
         {
             "name": "BrynzevDmitrii",
@@ -12,7 +17,9 @@
         }
     ],
     "require": {
-        "psr/container": "^2.0"
+        "psr/container": "^2.0",
+        "monolog/monolog": "^2.8",
+        "vlucas/phpdotenv": "^5.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.20",
